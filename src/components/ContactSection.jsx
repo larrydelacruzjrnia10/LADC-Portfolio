@@ -4,6 +4,7 @@ import { contactContent } from '../data/siteContent';
 
 const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || '';
 const MIN_SUBMIT_DELAY_MS = 3500;
+const SUCCESS_RESET_MS = 5000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const URL_PATTERN = /(?:https?:\/\/|www\.)[^\s]+/gi;
 const SUSPICIOUS_URL_PATTERN =
@@ -16,6 +17,14 @@ const initialFormState = {
   subject: '',
   message: '',
   _gotcha: '',
+};
+
+const initialTouchedState = {
+  fullName: false,
+  email: false,
+  mobileNumber: false,
+  subject: false,
+  message: false,
 };
 
 function buildMailtoLink(emailAddress, formState) {
@@ -31,9 +40,8 @@ function buildMailtoLink(emailAddress, formState) {
   return `mailto:${emailAddress}?subject=${encodeURIComponent(fallbackSubject)}&body=${encodeURIComponent(body)}`;
 }
 
-function getSpamUrlMessage(formState) {
-  const combinedText = `${formState.subject}\n${formState.message}`;
-  const detectedUrls = combinedText.match(URL_PATTERN) || [];
+function getUrlChecks(text) {
+  const detectedUrls = text.match(URL_PATTERN) || [];
 
   if (detectedUrls.length > 2) {
     return 'Please remove extra links and keep your message focused on your inquiry.';
@@ -46,29 +54,49 @@ function getSpamUrlMessage(formState) {
   return '';
 }
 
+function getFieldErrors(formState, delayPassed) {
+  const subjectUrlMessage = getUrlChecks(formState.subject);
+  const messageUrlMessage = getUrlChecks(formState.message);
+
+  return {
+    fullName: formState.fullName.trim() ? '' : 'Full name is required.',
+    email: !formState.email.trim()
+      ? 'Email address is required.'
+      : EMAIL_PATTERN.test(formState.email.trim())
+        ? ''
+        : 'Please enter a valid email address.',
+    mobileNumber: '',
+    subject: subjectUrlMessage,
+    message: !formState.message.trim()
+      ? 'Message is required.'
+      : messageUrlMessage,
+    form: !delayPassed ? 'Please wait a moment before sending.' : '',
+  };
+}
+
+function getInputClassName(hasError) {
+  return `rounded-[1rem] border bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none ${
+    hasError
+      ? 'border-red-400/50 bg-red-500/[0.06] focus:border-red-400'
+      : 'border-white/10 focus:border-brand-400'
+  }`;
+}
+
 function ContactSection() {
   const [formState, setFormState] = useState(initialFormState);
+  const [touchedFields, setTouchedFields] = useState(initialTouchedState);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [delayPassed, setDelayPassed] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const emailMethod = contactContent.methods.find((method) => method.href.startsWith('mailto:'));
   const emailAddress = emailMethod?.href.replace(/^mailto:/, '') || '';
+  const fieldErrors = getFieldErrors(formState, delayPassed);
   const requiredFieldsFilled =
     formState.fullName.trim() !== '' && formState.email.trim() !== '' && formState.message.trim() !== '';
-  const emailLooksValid = formState.email.trim() === '' || EMAIL_PATTERN.test(formState.email.trim());
-  const spamUrlMessage = getSpamUrlMessage(formState);
-  const validationMessage = !requiredFieldsFilled
-    ? 'Name, email address, and message are required.'
-    : !emailLooksValid
-      ? 'Please enter a valid email address.'
-      : spamUrlMessage
-        ? spamUrlMessage
-        : !delayPassed
-          ? 'Please wait a moment before sending.'
-          : '';
-  const canSubmit = requiredFieldsFilled && emailLooksValid && !spamUrlMessage && delayPassed && !isSubmitting;
+  const hasBlockingFieldErrors = Boolean(fieldErrors.fullName || fieldErrors.email || fieldErrors.subject || fieldErrors.message);
+  const canSubmit = requiredFieldsFilled && !hasBlockingFieldErrors && delayPassed && !isSubmitting;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -78,30 +106,53 @@ function ContactSection() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (status.type !== 'success') {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setStatus({ type: '', message: '' });
+    }, SUCCESS_RESET_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [status.type]);
+
   function handleChange(event) {
     const { name, value } = event.target;
-    setHasInteracted(true);
+
     setFormState((current) => ({
       ...current,
       [name]: value,
     }));
+
+    if (name in initialTouchedState) {
+      setTouchedFields((current) => ({
+        ...current,
+        [name]: true,
+      }));
+    }
+  }
+
+  function handleBlur(event) {
+    const { name } = event.target;
+
+    if (name in initialTouchedState) {
+      setTouchedFields((current) => ({
+        ...current,
+        [name]: true,
+      }));
+    }
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setSubmitAttempted(true);
 
-    if (!requiredFieldsFilled) {
+    if (fieldErrors.fullName || fieldErrors.email || fieldErrors.subject || fieldErrors.message) {
       setStatus({
         type: 'error',
-        message: 'Please fill in your name, email address, and message before sending.',
-      });
-      return;
-    }
-
-    if (!emailLooksValid) {
-      setStatus({
-        type: 'error',
-        message: 'Please enter a valid email address before sending.',
+        message: fieldErrors.fullName || fieldErrors.email || fieldErrors.subject || fieldErrors.message,
       });
       return;
     }
@@ -116,6 +167,7 @@ function ContactSection() {
 
     if (formState._gotcha.trim()) {
       setFormState(initialFormState);
+      setTouchedFields(initialTouchedState);
       setStatus({
         type: 'success',
         message: 'Your message was sent successfully.',
@@ -127,14 +179,6 @@ function ContactSection() {
       setStatus({
         type: 'error',
         message: 'Please wait a moment before sending your message.',
-      });
-      return;
-    }
-
-    if (spamUrlMessage) {
-      setStatus({
-        type: 'error',
-        message: spamUrlMessage,
       });
       return;
     }
@@ -167,6 +211,8 @@ function ContactSection() {
         }
 
         setFormState(initialFormState);
+        setTouchedFields(initialTouchedState);
+        setSubmitAttempted(false);
         setStatus({
           type: 'success',
           message: 'Your message was sent successfully.',
@@ -190,6 +236,8 @@ function ContactSection() {
     });
     setIsSubmitting(false);
   }
+
+  const showFieldError = (fieldName) => Boolean((submitAttempted || touchedFields[fieldName]) && fieldErrors[fieldName]);
 
   return (
     <section id="contact" className="scroll-mt-28">
@@ -248,48 +296,98 @@ function ContactSection() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <input
-                  type="text"
-                  name="fullName"
-                  placeholder="Full Name"
-                  value={formState.fullName}
-                  onChange={handleChange}
-                  className="rounded-[1rem] border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={formState.email}
-                  onChange={handleChange}
-                  className="rounded-[1rem] border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
-                />
-                <input
-                  type="text"
-                  name="mobileNumber"
-                  placeholder="Mobile Number"
-                  value={formState.mobileNumber}
-                  onChange={handleChange}
-                  className="rounded-[1rem] border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
-                />
-                <input
-                  type="text"
-                  name="subject"
-                  placeholder="Email Subject"
-                  value={formState.subject}
-                  onChange={handleChange}
-                  className="rounded-[1rem] border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
-                />
+                <div>
+                  <input
+                    type="text"
+                    name="fullName"
+                    placeholder="Full Name"
+                    value={formState.fullName}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={showFieldError('fullName')}
+                    className={getInputClassName(showFieldError('fullName'))}
+                  />
+                  {showFieldError('fullName') ? (
+                    <p className="mt-2 text-xs text-red-200">{fieldErrors.fullName}</p>
+                  ) : null}
+                </div>
+
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={formState.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={showFieldError('email')}
+                    className={getInputClassName(showFieldError('email'))}
+                  />
+                  {showFieldError('email') ? <p className="mt-2 text-xs text-red-200">{fieldErrors.email}</p> : null}
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    name="mobileNumber"
+                    placeholder="Mobile Number"
+                    value={formState.mobileNumber}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={getInputClassName(false)}
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    name="subject"
+                    placeholder="Email Subject"
+                    value={formState.subject}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    aria-invalid={showFieldError('subject')}
+                    className={getInputClassName(showFieldError('subject'))}
+                  />
+                  {showFieldError('subject') ? (
+                    <p className="mt-2 text-xs text-red-200">{fieldErrors.subject}</p>
+                  ) : null}
+                </div>
               </div>
 
-              <textarea
-                rows="8"
-                name="message"
-                placeholder="Your Message"
-                value={formState.message}
-                onChange={handleChange}
-                className="mt-4 w-full rounded-[1rem] border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-400 focus:outline-none"
-              />
+              <div className="mt-4">
+                <textarea
+                  rows="8"
+                  name="message"
+                  placeholder="Your Message"
+                  value={formState.message}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={showFieldError('message')}
+                  className={`w-full rounded-[1rem] border bg-slate-950/50 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none ${
+                    showFieldError('message')
+                      ? 'border-red-400/50 bg-red-500/[0.06] focus:border-red-400'
+                      : 'border-white/10 focus:border-brand-400'
+                  }`}
+                />
+                {showFieldError('message') ? (
+                  <p className="mt-2 text-xs text-red-200">{fieldErrors.message}</p>
+                ) : null}
+              </div>
+
+              <div className="mt-4 rounded-[1rem] border border-dashed border-brand-400/30 bg-brand-400/[0.05] p-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-brand-100">reCAPTCHA-ready area</p>
+                    <p className="mt-1 text-xs leading-6 text-slate-400">
+                      Reserved space for a future reCAPTCHA or Turnstile widget if you want stronger bot protection later.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-brand-400/25 bg-brand-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand-100">
+                    Future Upgrade
+                  </span>
+                </div>
+              </div>
 
               {status.message ? (
                 <div
@@ -305,9 +403,9 @@ function ContactSection() {
                 </div>
               ) : null}
 
-              {!status.message && hasInteracted && validationMessage ? (
+              {!status.message && submitAttempted && fieldErrors.form ? (
                 <div className="mt-4 rounded-[1rem] border border-brand-400/20 bg-brand-400/8 px-4 py-3 text-sm text-brand-100">
-                  {validationMessage}
+                  {fieldErrors.form}
                 </div>
               ) : null}
 
@@ -322,7 +420,7 @@ function ContactSection() {
                   className={`button-primary w-full sm:w-auto ${!canSubmit ? 'cursor-not-allowed opacity-60' : ''}`}
                   disabled={!canSubmit}
                 >
-                  {isSubmitting ? 'Sending...' : !delayPassed && requiredFieldsFilled && emailLooksValid ? 'Please Wait...' : 'Send Message'}
+                  {isSubmitting ? 'Sending...' : !delayPassed && requiredFieldsFilled && !hasBlockingFieldErrors ? 'Please Wait...' : 'Send Message'}
                 </button>
               </div>
             </form>
