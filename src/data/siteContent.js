@@ -232,9 +232,9 @@ export const contactContent = {
       href: 'https://github.com/larrydelacruzjrnia10',
     },
     {
-      label: 'LinkedIn / OnlineJobs.ph',
-      value: 'Add your LinkedIn or OnlineJobs.ph profile link',
-      href: '#',
+      label: 'OnlineJobs.ph',
+      value: 'v2.onlinejobs.ph/jobseekers/info/3843391',
+      href: 'https://v2.onlinejobs.ph/jobseekers/info/3843391',
     },
   ],
 };
