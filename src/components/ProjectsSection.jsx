@@ -3,6 +3,8 @@ import ProjectCard from './ProjectCard';
 import { projects } from '../data/siteContent';
 
 function ProjectsSection() {
+  const [featuredProject, ...secondaryProjects] = projects;
+
   return (
     <section id="projects" className="scroll-mt-28">
       <div className="section-shell">
@@ -12,8 +14,10 @@ function ProjectsSection() {
           description="These sample portfolio pieces show the kind of structured support Larry can bring to reporting environments, dashboard workflows, and admin-heavy systems."
         />
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {projects.map((project) => (
+        {featuredProject ? <ProjectCard {...featuredProject} featured /> : null}
+
+        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {secondaryProjects.map((project) => (
             <ProjectCard key={project.title} {...project} />
           ))}
         </div>
