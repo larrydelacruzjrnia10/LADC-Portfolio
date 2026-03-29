@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ActionButton from './ActionButton';
+import { hireMeLink } from '../data/siteContent';
 
 function Navbar({ links, activeSection }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,8 +49,13 @@ function Navbar({ links, activeSection }) {
               })}
             </nav>
 
-            <ActionButton href="#contact" className="hidden md:inline-flex">
-              Let&apos;s Talk
+            <ActionButton
+              href={hireMeLink.href}
+              className="hidden md:inline-flex"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {hireMeLink.label}
             </ActionButton>
           </div>
 
@@ -71,12 +77,14 @@ function Navbar({ links, activeSection }) {
                 );
               })}
               <ActionButton
-                href="#contact"
+                href={hireMeLink.href}
                 className="mt-2 w-full"
                 variant="secondary"
+                target="_blank"
+                rel="noreferrer"
                 onClick={() => setIsOpen(false)}
               >
-                Contact Larry
+                {hireMeLink.label}
               </ActionButton>
             </nav>
           ) : null}

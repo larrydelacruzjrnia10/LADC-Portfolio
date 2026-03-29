@@ -87,6 +87,14 @@ function HeroSection() {
                 <ActionButton href={heroContent.primaryCta.href} className="w-full sm:w-auto">
                   {heroContent.primaryCta.label}
                 </ActionButton>
+                <ActionButton
+                  href={heroContent.hireMeCta.href}
+                  className="w-full sm:w-auto"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {heroContent.hireMeCta.label}
+                </ActionButton>
                 <ActionButton href={heroContent.secondaryCta.href} variant="secondary" className="w-full sm:w-auto">
                   {heroContent.secondaryCta.label}
                 </ActionButton>

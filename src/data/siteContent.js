@@ -23,12 +23,18 @@ export const heroContent = {
   availability: 'Open to remote roles focused on structured data handling, dashboard monitoring, and admin workflow support.',
   primaryCta: { label: 'View Projects', href: '#projects' },
   secondaryCta: { label: 'Contact Me', href: '#contact' },
+  hireMeCta: { label: 'Hire Me', href: 'https://v2.onlinejobs.ph/jobseekers/info/3843391' },
   quickLinks: [
     { label: 'Email', href: 'mailto:larrydelacruzjr30@gmail.com', icon: 'mail' },
     { label: 'GitHub', href: 'https://github.com/larrydelacruzjrnia10', icon: 'github' },
     { label: 'Projects', href: '#projects', icon: 'grid' },
     { label: 'Contact', href: '#contact', icon: 'chat' },
   ],
+};
+
+export const hireMeLink = {
+  label: 'Hire Me',
+  href: 'https://v2.onlinejobs.ph/jobseekers/info/3843391',
 };
 
 export const profileContent = {
