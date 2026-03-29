@@ -10,6 +10,7 @@ const initialFormState = {
   mobileNumber: '',
   subject: '',
   message: '',
+  _gotcha: '',
 };
 
 function buildMailtoLink(emailAddress, formState) {
@@ -60,6 +61,15 @@ function ContactSection() {
       return;
     }
 
+    if (formState._gotcha.trim()) {
+      setFormState(initialFormState);
+      setStatus({
+        type: 'success',
+        message: 'Your message was sent successfully.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setStatus({ type: '', message: '' });
 
@@ -71,6 +81,7 @@ function ContactSection() {
       payload.append('mobileNumber', formState.mobileNumber);
       payload.append('subject', formState.subject || 'Portfolio Inquiry');
       payload.append('message', formState.message);
+      payload.append('_gotcha', formState._gotcha);
       payload.append('_subject', formState.subject || 'Portfolio Inquiry');
 
       try {
@@ -154,6 +165,19 @@ function ContactSection() {
               className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5 sm:p-6"
               onSubmit={handleSubmit}
             >
+              <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+                <label htmlFor="contact-company">Leave this field empty</label>
+                <input
+                  id="contact-company"
+                  type="text"
+                  name="_gotcha"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  value={formState._gotcha}
+                  onChange={handleChange}
+                />
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <input
                   type="text"
@@ -215,7 +239,7 @@ function ContactSection() {
               <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-lg text-sm leading-7 text-slate-400">
                   {FORMSPREE_ENDPOINT
-                    ? "Messages submitted here are sent from the site contact form to Larry's inbox."
+                    ? "Messages submitted here are sent from the site contact form to Larry's inbox. A hidden honeypot field is also enabled for basic bot filtering."
                     : 'This form currently opens a prefilled email draft. Add a Formspree endpoint later to send directly from the website.'}
                 </p>
                 <button type="submit" className="button-primary w-full sm:w-auto" disabled={isSubmitting}>
