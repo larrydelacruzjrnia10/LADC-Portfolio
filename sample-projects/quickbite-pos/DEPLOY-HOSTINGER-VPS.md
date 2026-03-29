@@ -1,5 +1,7 @@
 # Deploy QuickBite POS on Hostinger VPS
 
+This document is for a future full-stack phase. The current portfolio version of QuickBite POS is frontend-only and does not require a VPS, backend server, or database yet.
+
 This guide assumes:
 
 - Ubuntu-based Hostinger VPS

@@ -82,7 +82,7 @@ export const projects = [
   {
     title: 'QuickBite POS System',
     description:
-      'A fast-food point of sale system concept built for high-speed cashier flow, kitchen coordination, stock tracking, and daily reporting.',
+      'A fast-food point of sale UI/UX demo built for high-speed cashier flow, kitchen coordination, stock tracking, and daily reporting simulation.',
     features: [
       'Touch-friendly order entry with combo meals and add-ons',
       'Fast checkout with cash, card, and GCash simulation',
@@ -91,8 +91,10 @@ export const projects = [
     ],
     mockupLabel: 'Fast-Food POS',
     accent: 'mint',
-    github: 'https://github.com/larrydelacruzjrnia10/LADC-Portfolio/tree/main/sample-projects/quickbite-pos',
-    demo: '',
+    github: 'https://github.com/larrydelacruzjrnia10/QuickBite-POS',
+    demo: 'https://larrydelacruzjrnia10.github.io/QuickBite-POS/',
+    imageSrc: '/mockups/quickbite-cashier.svg',
+    imageAlt: 'QuickBite POS cashier ordering interface mockup',
   },
   {
     title: 'MROS System',
@@ -142,26 +144,33 @@ export const projects = [
 ];
 
 export const showcaseItems = [
-  // Replace these showcase placeholders with real screenshots or mockups later.
   {
     title: 'POS Checkout Screen',
-    description: 'A cashier-friendly touchscreen layout for order entry, cart review, and payment handling.',
+    description: 'A touchscreen cashier layout with menu filters, combo ordering, add-ons, and a live order summary.',
     accent: 'mint',
+    imageSrc: '/mockups/quickbite-cashier.svg',
+    imageAlt: 'QuickBite POS cashier ordering screen mockup',
   },
   {
     title: 'Kitchen Display Queue',
-    description: 'A real-time preparation queue for pending, preparing, and ready orders.',
+    description: 'A preparation board that helps crews move orders from pending to preparing to ready.',
     accent: 'brand',
+    imageSrc: '/mockups/quickbite-kitchen.svg',
+    imageAlt: 'QuickBite POS kitchen display queue mockup',
   },
   {
-    title: 'Dashboard Overview',
-    description: 'A clean executive-style summary for monitoring reports and service activity.',
+    title: 'Sales Dashboard',
+    description: 'An admin-facing summary of revenue, top-selling items, low-stock alerts, and shift performance.',
     accent: 'brand',
+    imageSrc: '/mockups/quickbite-admin.svg',
+    imageAlt: 'QuickBite POS sales dashboard mockup',
   },
   {
-    title: 'Data Management Interface',
-    description: 'An organized workspace for encoding, validating, and reviewing records.',
+    title: 'Receipt & Order Summary',
+    description: 'A compact payment and receipt view designed for fast handoff at the counter.',
     accent: 'mint',
+    imageSrc: '/mockups/quickbite-receipt.svg',
+    imageAlt: 'QuickBite POS receipt summary mockup',
   },
 ];
 

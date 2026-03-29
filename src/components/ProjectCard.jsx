@@ -1,9 +1,15 @@
 import MockupFrame from './MockupFrame';
 
-function ProjectCard({ title, description, features, mockupLabel, accent, github, demo }) {
+function ProjectCard({ title, description, features, mockupLabel, accent, github, demo, imageSrc, imageAlt }) {
   return (
     <article className="section-card flex h-full flex-col overflow-hidden p-6 sm:p-7">
-      <MockupFrame label={mockupLabel} accent={accent} lines={features.slice(0, 3)} />
+      {imageSrc ? (
+        <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-100 shadow-[0_18px_45px_-30px_rgba(15,23,42,0.35)]">
+          <img src={imageSrc} alt={imageAlt || title} className="h-full w-full object-cover" loading="lazy" />
+        </div>
+      ) : (
+        <MockupFrame label={mockupLabel} accent={accent} lines={features.slice(0, 3)} />
+      )}
 
       <div className="mt-6 flex flex-1 flex-col">
         <h3 className="text-2xl font-semibold text-slate-950">{title}</h3>

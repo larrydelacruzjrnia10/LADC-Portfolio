@@ -6,14 +6,6 @@ import ReceiptModal from './components/ReceiptModal';
 import TopBar from './components/TopBar';
 import { demoOrders, demoProducts } from './data/demoData';
 import {
-  createOrder,
-  fetchDailyReport,
-  fetchOrders,
-  fetchProducts,
-  updateOrderStatus,
-  updateProduct,
-} from './lib/api';
-import {
   buildCartItemKey,
   buildDailyReportFromOrders,
   buildLocalReceiptNumber,
@@ -49,8 +41,6 @@ function App() {
   const [paymentType, setPaymentType] = useState('Cash');
   const [cashReceived, setCashReceived] = useState('');
   const [receiptOrder, setReceiptOrder] = useState(null);
-  const [isOffline, setIsOffline] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   const totals = useMemo(() => getCartTotals(cart), [cart]);
 
@@ -106,44 +96,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem(storageKeys.report, JSON.stringify(report));
   }, [report]);
-
-  useEffect(() => {
-    loadDashboardData();
-
-    const intervalId = window.setInterval(() => {
-      loadDashboardData({ quiet: true });
-    }, 10000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  async function loadDashboardData({ quiet = false } = {}) {
-    if (!quiet) {
-      setIsLoading(true);
-    }
-
-    try {
-      const [productResponse, orderResponse, reportResponse] = await Promise.all([
-        fetchProducts(),
-        fetchOrders(),
-        fetchDailyReport(),
-      ]);
-
-      setProducts(productResponse.products);
-      setOrders(orderResponse.orders);
-      setReport(reportResponse);
-      setIsOffline(false);
-    } catch (error) {
-      setProducts(readLocalStorage(storageKeys.products, demoProducts));
-      setOrders(readLocalStorage(storageKeys.orders, demoOrders));
-      setReport(readLocalStorage(storageKeys.report, buildDailyReportFromOrders(demoOrders, demoProducts)));
-      setIsOffline(true);
-    } finally {
-      if (!quiet) {
-        setIsLoading(false);
-      }
-    }
-  }
 
   function addToCart(product, selectedAddOns, quantity) {
     const addOns = selectedAddOns.map((addOn) => ({ name: addOn.name, price: addOn.price }));
@@ -206,94 +158,68 @@ function App() {
     setCart((currentCart) => currentCart.filter((item) => item.key !== key));
   }
 
-  async function submitOrder() {
-    const payload = {
+  function submitOrder() {
+    const simulatedOrder = {
+      _id: `local-${Date.now()}`,
+      receiptNumber: buildLocalReceiptNumber(),
       cashierName: currentRole === 'admin' ? 'Admin Desk' : 'Cashier 01',
-      paymentType,
-      cashReceived: paymentType === 'Cash' ? Number(cashReceived || 0) : totals.total,
       items: cart.map((item) => ({
-        productId: item.productId,
+        product: item.productId,
+        name: item.name,
+        category: item.category,
+        basePrice: item.basePrice,
         quantity: item.quantity,
         selectedAddOns: item.selectedAddOns,
+        lineTotal: item.lineTotal,
       })),
+      subtotal: totals.subtotal,
+      tax: totals.tax,
+      total: totals.total,
+      paymentType,
+      cashReceived: paymentType === 'Cash' ? Number(cashReceived || 0) : totals.total,
+      change:
+        paymentType === 'Cash' ? Number((Number(cashReceived || 0) - totals.total).toFixed(2)) : 0,
+      status: 'Pending',
+      createdAt: new Date().toISOString(),
     };
 
-    try {
-      const response = await createOrder(payload);
-      setReceiptOrder(response.order);
-      setCart([]);
-      setCashReceived('');
-      setPaymentType('Cash');
-      await loadDashboardData({ quiet: true });
-    } catch (error) {
-      const simulatedOrder = {
-        _id: `local-${Date.now()}`,
-        receiptNumber: buildLocalReceiptNumber(),
-        cashierName: payload.cashierName,
-        items: cart.map((item) => ({
-          product: item.productId,
-          name: item.name,
-          category: item.category,
-          basePrice: item.basePrice,
-          quantity: item.quantity,
-          selectedAddOns: item.selectedAddOns,
-          lineTotal: item.lineTotal,
-        })),
-        subtotal: totals.subtotal,
-        tax: totals.tax,
-        total: totals.total,
-        paymentType,
-        cashReceived: payload.cashReceived,
-        change: paymentType === 'Cash' ? Number((payload.cashReceived - totals.total).toFixed(2)) : 0,
-        status: 'Pending',
-        createdAt: new Date().toISOString(),
-      };
+    const nextProducts = products.map((product) => {
+      const matchedItem = cart.find((item) => item.productId === product._id);
+      return matchedItem
+        ? {
+            ...product,
+            stock: Math.max(0, product.stock - matchedItem.quantity),
+          }
+        : product;
+    });
 
-      const nextProducts = products.map((product) => {
-        const matchedItem = cart.find((item) => item.productId === product._id);
-        return matchedItem
-          ? {
-              ...product,
-              stock: Math.max(0, product.stock - matchedItem.quantity),
-            }
-          : product;
-      });
+    const nextOrders = [simulatedOrder, ...orders];
+    const nextReport = buildDailyReportFromOrders(nextOrders, nextProducts);
 
-      const nextOrders = [simulatedOrder, ...orders];
-      const nextReport = buildDailyReportFromOrders(nextOrders, nextProducts);
-
-      setProducts(nextProducts);
-      setOrders(nextOrders);
-      setReport(nextReport);
-      setReceiptOrder(simulatedOrder);
-      setCart([]);
-      setCashReceived('');
-      setPaymentType('Cash');
-      setIsOffline(true);
-    }
+    setProducts(nextProducts);
+    setOrders(nextOrders);
+    setReport(nextReport);
+    setReceiptOrder(simulatedOrder);
+    setCart([]);
+    setCashReceived('');
+    setPaymentType('Cash');
   }
 
-  async function advanceOrderStatus(orderId, nextStatus) {
-    try {
-      await updateOrderStatus(orderId, nextStatus);
-      await loadDashboardData({ quiet: true });
-    } catch (error) {
-      const nextOrders = orders.map((order) =>
-        order._id === orderId
-          ? {
-              ...order,
-              status: nextStatus,
-            }
-          : order,
-      );
+  function advanceOrderStatus(orderId, nextStatus) {
+    const nextOrders = orders.map((order) =>
+      order._id === orderId
+        ? {
+            ...order,
+            status: nextStatus,
+          }
+        : order,
+    );
 
-      setOrders(nextOrders);
-      setReport(buildDailyReportFromOrders(nextOrders, products));
-      setIsOffline(true);
-    }
+    setOrders(nextOrders);
+    setReport(buildDailyReportFromOrders(nextOrders, products));
   }
 
-  async function restockProduct(productId, quantity) {
+  function restockProduct(productId, quantity) {
     const targetProduct = products.find((product) => product._id === productId);
 
     if (!targetProduct) {
@@ -301,61 +227,38 @@ function App() {
     }
 
     const nextStock = targetProduct.stock + quantity;
+    const nextProducts = products.map((product) =>
+      product._id === productId
+        ? {
+            ...product,
+            stock: nextStock,
+          }
+        : product,
+    );
 
-    try {
-      await updateProduct(productId, { stock: nextStock });
-      await loadDashboardData({ quiet: true });
-    } catch (error) {
-      const nextProducts = products.map((product) =>
-        product._id === productId
-          ? {
-              ...product,
-              stock: nextStock,
-            }
-          : product,
-      );
-
-      setProducts(nextProducts);
-      setReport(buildDailyReportFromOrders(orders, nextProducts));
-      setIsOffline(true);
-    }
+    setProducts(nextProducts);
+    setReport(buildDailyReportFromOrders(orders, nextProducts));
   }
 
-  async function toggleAvailability(productId, isActive) {
-    try {
-      await updateProduct(productId, { isActive });
-      await loadDashboardData({ quiet: true });
-    } catch (error) {
-      const nextProducts = products.map((product) =>
-        product._id === productId
-          ? {
-              ...product,
-              isActive,
-            }
-          : product,
-      );
+  function toggleAvailability(productId, isActive) {
+    const nextProducts = products.map((product) =>
+      product._id === productId
+        ? {
+            ...product,
+            isActive,
+          }
+        : product,
+    );
 
-      setProducts(nextProducts);
-      setReport(buildDailyReportFromOrders(orders, nextProducts));
-      setIsOffline(true);
-    }
+    setProducts(nextProducts);
+    setReport(buildDailyReportFromOrders(orders, nextProducts));
   }
 
   return (
     <div className="shell">
-      <TopBar
-        currentView={currentView}
-        onChangeView={setCurrentView}
-        currentRole={currentRole}
-        onChangeRole={setCurrentRole}
-        isOffline={isOffline}
-      />
+      <TopBar currentView={currentView} onChangeView={setCurrentView} currentRole={currentRole} onChangeRole={setCurrentRole} />
 
-      {isLoading ? (
-        <div className="panel p-8 text-center text-slate-500">Loading QuickBite POS workspace...</div>
-      ) : null}
-
-      {!isLoading && currentView === 'cashier' ? (
+      {currentView === 'cashier' ? (
         <CashierView
           categories={categoryOptions}
           products={cashierProducts}
@@ -377,11 +280,9 @@ function App() {
         />
       ) : null}
 
-      {!isLoading && currentView === 'kitchen' ? (
-        <KitchenView orders={kitchenOrders} onAdvanceStatus={advanceOrderStatus} />
-      ) : null}
+      {currentView === 'kitchen' ? <KitchenView orders={kitchenOrders} onAdvanceStatus={advanceOrderStatus} /> : null}
 
-      {!isLoading && currentView === 'admin' ? (
+      {currentView === 'admin' ? (
         <AdminView
           report={report}
           products={products}

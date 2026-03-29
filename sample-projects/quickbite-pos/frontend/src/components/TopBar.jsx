@@ -1,4 +1,4 @@
-function TopBar({ currentView, onChangeView, currentRole, onChangeRole, isOffline }) {
+function TopBar({ currentView, onChangeView, currentRole, onChangeRole }) {
   const views = [
     { id: 'cashier', label: 'Cashier POS' },
     { id: 'kitchen', label: 'Kitchen Display' },
@@ -12,7 +12,7 @@ function TopBar({ currentView, onChangeView, currentRole, onChangeRole, isOfflin
           <div className="soft-label">Portfolio Sample Project</div>
           <h1 className="mt-3 font-display text-3xl font-extrabold text-slate-950">QuickBite Fast-Food POS</h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
-            A realistic cashier, kitchen, and admin workflow demo built as a portfolio-ready full-stack POS system.
+            A realistic cashier, kitchen, and admin workflow demo built as a portfolio-ready frontend-only POS concept.
           </p>
         </div>
 
@@ -55,12 +55,8 @@ function TopBar({ currentView, onChangeView, currentRole, onChangeRole, isOfflin
               </button>
             </div>
 
-            <div
-              className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                isOffline ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
-              }`}
-            >
-              {isOffline ? 'Offline-ready simulation mode' : 'Backend connected'}
+            <div className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
+              UI-only simulation mode
             </div>
           </div>
         </div>

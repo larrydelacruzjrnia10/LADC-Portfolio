@@ -11,7 +11,7 @@ function ShowcaseSection() {
             <SectionHeader
               eyebrow="Work Showcase"
               title="Space for dashboards, forms, and screenshots that reinforce trust."
-              description="Each card below is a polished placeholder for future screenshots or mockups. Larry can replace these later with real system views, report pages, and workflow captures."
+              description="These sample visuals show how Larry can present polished system views, reporting screens, and workflow interfaces in a client-facing portfolio."
             />
 
             <div className="grid gap-5 md:grid-cols-2">
