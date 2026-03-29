@@ -243,7 +243,7 @@ function ContactSection() {
     <section id="contact" className="scroll-mt-28">
       <div className="section-shell pt-10">
         <div className="section-card overflow-hidden p-6 sm:p-10">
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="grid gap-8 xl:grid-cols-[0.82fr_1.18fr] xl:gap-10">
             <div>
               <SectionHeader
                 eyebrow="Contact"
@@ -251,8 +251,8 @@ function ContactSection() {
                 description={contactContent.description}
               />
 
-              <div className="mt-8 grid gap-4">
-                {contactContent.methods.map((method) => {
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                {contactContent.methods.map((method, index) => {
                   const isMailLink = method.href.startsWith('mailto:');
                   const isPlaceholder = method.href === '#';
 
@@ -263,7 +263,9 @@ function ContactSection() {
                       target={!isMailLink && !isPlaceholder ? '_blank' : undefined}
                       rel={!isMailLink && !isPlaceholder ? 'noreferrer' : undefined}
                       onClick={isPlaceholder ? (event) => event.preventDefault() : undefined}
-                      className="group min-w-0 rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-400/30 hover:shadow-soft"
+                      className={`group min-w-0 rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-400/30 hover:shadow-soft ${
+                        index === 0 ? 'sm:col-span-2' : ''
+                      }`}
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-200">{method.label}</p>
                       <div className="mt-3 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">

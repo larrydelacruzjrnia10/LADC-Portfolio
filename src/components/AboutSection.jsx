@@ -6,7 +6,7 @@ function AboutSection() {
   return (
     <section id="about" className="scroll-mt-28">
       <div className="section-shell">
-        <div className="section-card grid gap-10 p-8 sm:p-10 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="section-card grid gap-8 p-6 sm:p-8 xl:grid-cols-[0.84fr_1.16fr] xl:items-center xl:gap-10">
           <div className="panel-inset flex flex-col justify-center p-6 sm:p-8">
             <PortraitFrame
               src={profileContent.imageSrc}

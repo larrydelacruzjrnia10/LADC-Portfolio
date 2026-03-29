@@ -11,12 +11,13 @@ function ProjectCard({
   imageSrc,
   imageAlt,
   featured = false,
+  className = '',
 }) {
   return (
     <article
       className={`section-card overflow-hidden ${
         featured ? 'p-6 sm:p-8 lg:p-9' : 'flex h-full flex-col p-6 sm:p-7'
-      }`}
+      } ${className}`.trim()}
     >
       <div className={featured ? 'lg:grid lg:grid-cols-[0.96fr_1.04fr] lg:items-center lg:gap-8' : ''}>
         <div>

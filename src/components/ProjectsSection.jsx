@@ -16,9 +16,13 @@ function ProjectsSection() {
 
         {featuredProject ? <ProjectCard {...featuredProject} featured /> : null}
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {secondaryProjects.map((project) => (
-            <ProjectCard key={project.title} {...project} />
+        <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-6">
+          {secondaryProjects.map((project, index) => (
+            <ProjectCard
+              key={project.title}
+              {...project}
+              className={index === 0 ? 'md:col-span-2 xl:col-span-2' : 'xl:col-span-2'}
+            />
           ))}
         </div>
       </div>

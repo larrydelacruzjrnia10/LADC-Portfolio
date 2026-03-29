@@ -41,9 +41,9 @@ function QuickLinkIcon({ icon }) {
 function HeroSection() {
   return (
     <section id="home" className="scroll-mt-28">
-      <div className="section-shell pb-10 pt-10 sm:pb-12 sm:pt-16">
+      <div className="section-shell pb-10 pt-8 sm:pb-12 sm:pt-14 lg:pb-16">
         <div className="section-card overflow-hidden p-6 sm:p-8 lg:p-10">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid items-center gap-8 xl:grid-cols-[1.02fr_0.98fr] xl:gap-10">
             <div>
               <span className="section-tag">Virtual Assistant Portfolio</span>
               <p className="mt-6 text-xl font-semibold text-slate-100 sm:text-2xl">{heroContent.leadIn}</p>
@@ -83,7 +83,7 @@ function HeroSection() {
                 })}
               </div>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap xl:flex-nowrap">
                 <ActionButton href={heroContent.primaryCta.href} className="w-full sm:w-auto">
                   {heroContent.primaryCta.label}
                 </ActionButton>
@@ -130,9 +130,11 @@ function HeroSection() {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {heroStats.map((stat) => (
-              <StatCard key={stat.title} {...stat} />
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {heroStats.map((stat, index) => (
+              <div key={stat.title} className={index === 0 ? 'sm:col-span-2 xl:col-span-1' : ''}>
+                <StatCard {...stat} />
+              </div>
             ))}
           </div>
         </div>

@@ -3,6 +3,8 @@ import ServiceCard from './ServiceCard';
 import { services } from '../data/siteContent';
 
 function ServicesSection() {
+  const [featuredService, ...secondaryServices] = services;
+
   return (
     <section id="services" className="scroll-mt-28">
       <div className="section-shell">
@@ -13,10 +15,14 @@ function ServicesSection() {
           align="center"
         />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {services.map((service) => (
-            <ServiceCard key={service.title} {...service} />
-          ))}
+        <div className="mt-12 grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+          {featuredService ? <ServiceCard {...featuredService} featured /> : null}
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {secondaryServices.map((service) => (
+              <ServiceCard key={service.title} {...service} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
