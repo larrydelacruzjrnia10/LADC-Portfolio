@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SectionHeader from './SectionHeader';
 import { contactContent } from '../data/siteContent';
 
 const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || '';
+const MIN_SUBMIT_DELAY_MS = 3500;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const URL_PATTERN = /(?:https?:\/\/|www\.)[^\s]+/gi;
+const SUSPICIOUS_URL_PATTERN =
+  /(?:bit\.ly|tinyurl\.com|t\.co|goo\.gl|rb\.gy|rebrand\.ly|cutt\.ly|is\.gd|buff\.ly|grabify|ngrok|discord\.gg|telegram\.me|wa\.me|\.ru\b|\.cn\b|\.tk\b|\.xyz\b|\.click\b|\.top\b|\.shop\b)/i;
 
 const initialFormState = {
   fullName: '',
@@ -26,16 +31,56 @@ function buildMailtoLink(emailAddress, formState) {
   return `mailto:${emailAddress}?subject=${encodeURIComponent(fallbackSubject)}&body=${encodeURIComponent(body)}`;
 }
 
+function getSpamUrlMessage(formState) {
+  const combinedText = `${formState.subject}\n${formState.message}`;
+  const detectedUrls = combinedText.match(URL_PATTERN) || [];
+
+  if (detectedUrls.length > 2) {
+    return 'Please remove extra links and keep your message focused on your inquiry.';
+  }
+
+  if (detectedUrls.some((url) => SUSPICIOUS_URL_PATTERN.test(url))) {
+    return 'Please remove shortened or suspicious links before sending your message.';
+  }
+
+  return '';
+}
+
 function ContactSection() {
   const [formState, setFormState] = useState(initialFormState);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [delayPassed, setDelayPassed] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const emailMethod = contactContent.methods.find((method) => method.href.startsWith('mailto:'));
   const emailAddress = emailMethod?.href.replace(/^mailto:/, '') || '';
+  const requiredFieldsFilled =
+    formState.fullName.trim() !== '' && formState.email.trim() !== '' && formState.message.trim() !== '';
+  const emailLooksValid = formState.email.trim() === '' || EMAIL_PATTERN.test(formState.email.trim());
+  const spamUrlMessage = getSpamUrlMessage(formState);
+  const validationMessage = !requiredFieldsFilled
+    ? 'Name, email address, and message are required.'
+    : !emailLooksValid
+      ? 'Please enter a valid email address.'
+      : spamUrlMessage
+        ? spamUrlMessage
+        : !delayPassed
+          ? 'Please wait a moment before sending.'
+          : '';
+  const canSubmit = requiredFieldsFilled && emailLooksValid && !spamUrlMessage && delayPassed && !isSubmitting;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDelayPassed(true);
+    }, MIN_SUBMIT_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
+    setHasInteracted(true);
     setFormState((current) => ({
       ...current,
       [name]: value,
@@ -45,10 +90,18 @@ function ContactSection() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!formState.fullName.trim() || !formState.email.trim() || !formState.message.trim()) {
+    if (!requiredFieldsFilled) {
       setStatus({
         type: 'error',
         message: 'Please fill in your name, email address, and message before sending.',
+      });
+      return;
+    }
+
+    if (!emailLooksValid) {
+      setStatus({
+        type: 'error',
+        message: 'Please enter a valid email address before sending.',
       });
       return;
     }
@@ -66,6 +119,22 @@ function ContactSection() {
       setStatus({
         type: 'success',
         message: 'Your message was sent successfully.',
+      });
+      return;
+    }
+
+    if (!delayPassed) {
+      setStatus({
+        type: 'error',
+        message: 'Please wait a moment before sending your message.',
+      });
+      return;
+    }
+
+    if (spamUrlMessage) {
+      setStatus({
+        type: 'error',
+        message: spamUrlMessage,
       });
       return;
     }
@@ -236,14 +305,24 @@ function ContactSection() {
                 </div>
               ) : null}
 
+              {!status.message && hasInteracted && validationMessage ? (
+                <div className="mt-4 rounded-[1rem] border border-brand-400/20 bg-brand-400/8 px-4 py-3 text-sm text-brand-100">
+                  {validationMessage}
+                </div>
+              ) : null}
+
               <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-lg text-sm leading-7 text-slate-400">
                   {FORMSPREE_ENDPOINT
-                    ? "Messages submitted here are sent from the site contact form to Larry's inbox. A hidden honeypot field is also enabled for basic bot filtering."
+                    ? "Messages submitted here are sent from the site contact form to Larry's inbox. A hidden honeypot field, suspicious-link filter, and short submit delay are also enabled for basic bot filtering."
                     : 'This form currently opens a prefilled email draft. Add a Formspree endpoint later to send directly from the website.'}
                 </p>
-                <button type="submit" className="button-primary w-full sm:w-auto" disabled={isSubmitting}>
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                <button
+                  type="submit"
+                  className={`button-primary w-full sm:w-auto ${!canSubmit ? 'cursor-not-allowed opacity-60' : ''}`}
+                  disabled={!canSubmit}
+                >
+                  {isSubmitting ? 'Sending...' : !delayPassed && requiredFieldsFilled && emailLooksValid ? 'Please Wait...' : 'Send Message'}
                 </button>
               </div>
             </form>
