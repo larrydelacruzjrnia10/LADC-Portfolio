@@ -22,23 +22,29 @@ function ContactSection() {
             </div>
 
             <div className="grid gap-4">
-              {contactContent.methods.map((method) => (
-                <a
-                  key={method.label}
-                  href={method.href}
-                  target={method.href.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={method.href.startsWith('mailto:') ? undefined : 'noreferrer'}
-                  className="group min-w-0 rounded-[1.6rem] border border-slate-200 bg-white/90 p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-soft"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">{method.label}</p>
-                  <div className="mt-3 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-                    <p className="min-w-0 break-all text-base font-semibold text-slate-900">{method.value}</p>
-                    <span className="rounded-full bg-brand-50 px-3 py-1 text-sm text-brand-700 transition duration-300 group-hover:bg-brand-100">
-                      Open
-                    </span>
-                  </div>
-                </a>
-              ))}
+              {contactContent.methods.map((method) => {
+                const isMailLink = method.href.startsWith('mailto:');
+                const isPlaceholder = method.href === '#';
+
+                return (
+                  <a
+                    key={method.label}
+                    href={method.href}
+                    target={!isMailLink && !isPlaceholder ? '_blank' : undefined}
+                    rel={!isMailLink && !isPlaceholder ? 'noreferrer' : undefined}
+                    onClick={isPlaceholder ? (event) => event.preventDefault() : undefined}
+                    className="group min-w-0 rounded-[1.6rem] border border-slate-200 bg-white/90 p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-soft"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">{method.label}</p>
+                    <div className="mt-3 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                      <p className="min-w-0 break-all text-base font-semibold text-slate-900">{method.value}</p>
+                      <span className="rounded-full bg-brand-50 px-3 py-1 text-sm text-brand-700 transition duration-300 group-hover:bg-brand-100">
+                        {isPlaceholder ? 'Add Link' : 'Open'}
+                      </span>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>

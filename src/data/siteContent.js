@@ -80,6 +80,21 @@ export const skillGroups = [
 export const projects = [
   // Add GitHub and demo URLs below when project links are ready to publish.
   {
+    title: 'QuickBite POS System',
+    description:
+      'A fast-food point of sale system concept built for high-speed cashier flow, kitchen coordination, stock tracking, and daily reporting.',
+    features: [
+      'Touch-friendly order entry with combo meals and add-ons',
+      'Fast checkout with cash, card, and GCash simulation',
+      'Kitchen display queue with live order status updates',
+      'Inventory and daily sales reporting for admin review',
+    ],
+    mockupLabel: 'Fast-Food POS',
+    accent: 'mint',
+    github: 'https://github.com/larrydelacruzjrnia10/LADC-Portfolio/tree/main/sample-projects/quickbite-pos',
+    demo: '',
+  },
+  {
     title: 'MROS System',
     description:
       'A multi-role web system designed to manage irrigation data, reports, and operational workflows across different user levels.',
@@ -129,6 +144,16 @@ export const projects = [
 export const showcaseItems = [
   // Replace these showcase placeholders with real screenshots or mockups later.
   {
+    title: 'POS Checkout Screen',
+    description: 'A cashier-friendly touchscreen layout for order entry, cart review, and payment handling.',
+    accent: 'mint',
+  },
+  {
+    title: 'Kitchen Display Queue',
+    description: 'A real-time preparation queue for pending, preparing, and ready orders.',
+    accent: 'brand',
+  },
+  {
     title: 'Dashboard Overview',
     description: 'A clean executive-style summary for monitoring reports and service activity.',
     accent: 'brand',
@@ -136,16 +161,6 @@ export const showcaseItems = [
   {
     title: 'Data Management Interface',
     description: 'An organized workspace for encoding, validating, and reviewing records.',
-    accent: 'mint',
-  },
-  {
-    title: 'Report Generation',
-    description: 'Structured reporting panels for periodic review and operational updates.',
-    accent: 'brand',
-  },
-  {
-    title: 'Forms and Encoding Page',
-    description: 'A dependable page layout for form completion and data submission tasks.',
     accent: 'mint',
   },
 ];
@@ -181,18 +196,18 @@ export const contactContent = {
   methods: [
     {
       label: 'Email',
-      value: 'your-email@example.com',
-      href: 'mailto:your-email@example.com',
+      value: 'larrydelacruzjr30@gmail.com',
+      href: 'mailto:larrydelacruzjr30@gmail.com',
     },
     {
       label: 'GitHub',
-      value: 'github.com/your-username',
-      href: 'https://github.com/your-username',
+      value: 'github.com/larrydelacruzjrnia10',
+      href: 'https://github.com/larrydelacruzjrnia10',
     },
     {
       label: 'LinkedIn / OnlineJobs.ph',
-      value: 'linkedin.com/in/your-profile',
-      href: 'https://www.linkedin.com/in/your-profile',
+      value: 'Add your LinkedIn or OnlineJobs.ph profile link',
+      href: '#',
     },
   ],
 };

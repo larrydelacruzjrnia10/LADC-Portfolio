@@ -40,6 +40,7 @@ npm run preview
 - Update editable portfolio content in `src/data/siteContent.js`.
 - Replace placeholder contact links in `src/data/siteContent.js`.
 - Add real screenshots later by replacing the mockup components or adding image assets.
+- A full-stack POS sample project is included at `sample-projects/quickbite-pos`.
 
 ## Tailwind setup
 

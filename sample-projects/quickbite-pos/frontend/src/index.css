@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply m-0 min-w-[320px] bg-slate-100 font-sans text-slate-900 antialiased;
+  background-image:
+    radial-gradient(circle at top left, rgba(250, 204, 21, 0.15), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(239, 68, 68, 0.12), transparent 22%),
+    linear-gradient(180deg, #fffdf8 0%, #fff7ed 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(239, 68, 68, 0.18);
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-[2rem] border border-white/70 bg-white/90 shadow-order backdrop-blur-sm;
+  }
+
+  .pill-button {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition duration-200;
+  }
+
+  .pill-button-primary {
+    @apply pill-button bg-gradient-to-r from-red-600 to-amber-500 text-white hover:-translate-y-0.5;
+  }
+
+  .pill-button-secondary {
+    @apply pill-button border border-slate-200 bg-white text-slate-700 hover:border-red-200 hover:text-red-600;
+  }
+
+  .soft-label {
+    @apply inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-red-700;
+  }
+}
