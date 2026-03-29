@@ -62,5 +62,5 @@ This project includes a GitHub Actions workflow at `.github/workflows/deploy.yml
 
 ### Notes
 
-- `vite.config.js` uses `base: './'`, which works well for GitHub Pages static deployment.
-- If you later want a repo-specific base path, change `base` in `vite.config.js`.
+- `vite.config.js` is already configured for this repository's GitHub Pages path: `/LADC-Portfolio/`.
+- Local development keeps the normal `/` base while production builds use the GitHub Pages repo path.
