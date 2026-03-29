@@ -67,6 +67,7 @@ function ContactSection() {
       const payload = new FormData();
       payload.append('fullName', formState.fullName);
       payload.append('email', formState.email);
+      payload.append('_replyto', formState.email);
       payload.append('mobileNumber', formState.mobileNumber);
       payload.append('subject', formState.subject || 'Portfolio Inquiry');
       payload.append('message', formState.message);
@@ -214,7 +215,7 @@ function ContactSection() {
               <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-lg text-sm leading-7 text-slate-400">
                   {FORMSPREE_ENDPOINT
-                    ? 'Messages submitted here are sent from the site contact form to Larry’s inbox.'
+                    ? "Messages submitted here are sent from the site contact form to Larry's inbox."
                     : 'This form currently opens a prefilled email draft. Add a Formspree endpoint later to send directly from the website.'}
                 </p>
                 <button type="submit" className="button-primary w-full sm:w-auto" disabled={isSubmitting}>
