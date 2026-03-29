@@ -246,5 +246,5 @@ export const contactContent = {
 };
 
 export const footerContent = {
-  name: 'Larry Abistano Dela Cruz Jr.',
+  name: 'Larry Dela Cruz Jr.',
 };
