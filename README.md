@@ -37,21 +37,21 @@ npm run preview
 
 ## Customization notes
 
-- Update editable portfolio content in [src/data/siteContent.js](/c:/Users/EOD/Documents/PORTFOLIO/src/data/siteContent.js).
-- Replace placeholder contact links in [src/data/siteContent.js](/c:/Users/EOD/Documents/PORTFOLIO/src/data/siteContent.js).
+- Update editable portfolio content in `src/data/siteContent.js`.
+- Replace placeholder contact links in `src/data/siteContent.js`.
 - Add real screenshots later by replacing the mockup components or adding image assets.
 
 ## Tailwind setup
 
 Tailwind is already configured through:
 
-- [tailwind.config.js](/c:/Users/EOD/Documents/PORTFOLIO/tailwind.config.js)
-- [postcss.config.js](/c:/Users/EOD/Documents/PORTFOLIO/postcss.config.js)
-- [src/index.css](/c:/Users/EOD/Documents/PORTFOLIO/src/index.css)
+- `tailwind.config.js`
+- `postcss.config.js`
+- `src/index.css`
 
 ## GitHub Pages deployment
 
-This project includes a GitHub Actions workflow at [.github/workflows/deploy.yml](/c:/Users/EOD/Documents/PORTFOLIO/.github/workflows/deploy.yml).
+This project includes a GitHub Actions workflow at `.github/workflows/deploy.yml`.
 
 ### Recommended deployment steps
 
@@ -63,4 +63,4 @@ This project includes a GitHub Actions workflow at [.github/workflows/deploy.yml
 ### Notes
 
 - `vite.config.js` uses `base: './'`, which works well for GitHub Pages static deployment.
-- If you later want a repo-specific base path, change `base` in [vite.config.js](/c:/Users/EOD/Documents/PORTFOLIO/vite.config.js).
+- If you later want a repo-specific base path, change `base` in `vite.config.js`.
