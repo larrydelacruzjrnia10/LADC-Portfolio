@@ -16,8 +16,11 @@ function App() {
   const activeSection = useActiveSection(sectionIds);
 
   return (
-    <div className="app-shell relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-900">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(127,224,239,0.22),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(70,201,143,0.16),_transparent_24%),linear-gradient(180deg,_#f5fbff_0%,_#f9fffd_42%,_#eef8f5_100%)]" />
+    <div className="app-shell relative min-h-screen overflow-x-hidden bg-slate-950 text-white">
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,_#070d16_0%,_#0a1320_35%,_#0b111b_100%)]" />
+      <div className="absolute left-[-8rem] top-[18rem] -z-10 h-[24rem] w-[24rem] rounded-full bg-brand-500/20 blur-[130px]" />
+      <div className="absolute bottom-[8rem] right-[-6rem] -z-10 h-[26rem] w-[26rem] rounded-full bg-mint-500/12 blur-[150px]" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.18),_transparent_40%)]" />
       <Navbar links={navigationLinks} activeSection={activeSection} />
 
       <main className="relative">

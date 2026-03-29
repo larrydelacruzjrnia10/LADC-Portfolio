@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  @apply m-0 bg-slate-950 font-sans text-slate-800 antialiased;
+  @apply m-0 bg-slate-950 font-sans text-slate-100 antialiased;
 }
 
 * {
@@ -17,8 +17,8 @@ body {
 }
 
 ::selection {
-  background: rgba(25, 172, 197, 0.18);
-  color: #0f172a;
+  background: rgba(34, 211, 238, 0.28);
+  color: #e2f7ff;
 }
 
 @layer base {
@@ -33,31 +33,31 @@ body {
 
 @layer components {
   .section-shell {
-    @apply relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8;
+    @apply relative mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8;
   }
 
   .section-card {
-    @apply rounded-[1.6rem] border border-white/70 bg-white/85 shadow-soft backdrop-blur-sm sm:rounded-[2rem];
+    @apply rounded-[1.6rem] border border-white/10 bg-white/[0.04] shadow-soft backdrop-blur-md sm:rounded-[2rem];
   }
 
   .section-tag {
-    @apply inline-flex max-w-full items-center rounded-full border border-brand-200 bg-brand-50 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 sm:text-xs sm:tracking-[0.22em];
+    @apply inline-flex max-w-full items-center rounded-full border border-brand-400/30 bg-brand-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-200 sm:text-xs sm:tracking-[0.22em];
   }
 
   .button-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brand-700 via-brand-600 to-mint-600 px-6 py-3 text-sm font-semibold text-white shadow-lift transition duration-300 hover:-translate-y-0.5 hover:shadow-soft;
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brand-500 via-brand-400 to-mint-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lift transition duration-300 hover:-translate-y-0.5 hover:shadow-soft;
   }
 
   .button-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-brand-200 bg-white/90 px-6 py-3 text-sm font-semibold text-slate-800 transition duration-300 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-700;
+    @apply inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-brand-400/50 hover:bg-brand-400/10 hover:text-brand-100;
   }
 
   .nav-link {
-    @apply rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition duration-300 hover:bg-brand-50 hover:text-brand-700;
+    @apply rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition duration-300 hover:bg-brand-400/10 hover:text-brand-100;
   }
 
   .nav-link-active {
-    @apply bg-brand-50 text-brand-700 shadow-sm;
+    @apply bg-brand-400/15 text-brand-100 shadow-sm;
   }
 
   .soft-grid {
@@ -69,8 +69,16 @@ body {
 
   .gradient-border {
     background:
-      linear-gradient(white, white) padding-box,
-      linear-gradient(135deg, rgba(25, 172, 197, 0.35), rgba(70, 201, 143, 0.35)) border-box;
+      linear-gradient(rgba(15, 23, 35, 0.92), rgba(15, 23, 35, 0.92)) padding-box,
+      linear-gradient(135deg, rgba(34, 211, 238, 0.35), rgba(70, 201, 143, 0.35)) border-box;
     border: 1px solid transparent;
+  }
+
+  .panel-inset {
+    @apply rounded-[1.5rem] border border-white/10 bg-white/[0.03];
+  }
+
+  .portrait-hex {
+    clip-path: polygon(50% 0%, 89% 22%, 89% 78%, 50% 100%, 11% 78%, 11% 22%);
   }
 }

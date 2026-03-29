@@ -33,12 +33,12 @@ export default {
         },
       },
       boxShadow: {
-        soft: '0 24px 60px rgba(7, 20, 31, 0.08)',
-        lift: '0 20px 45px rgba(21, 108, 127, 0.14)',
+        soft: '0 24px 70px rgba(2, 12, 27, 0.45)',
+        lift: '0 20px 55px rgba(25, 172, 197, 0.24)',
       },
       fontFamily: {
-        sans: ['Manrope', 'Segoe UI', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
+        sans: ['Outfit', 'Segoe UI', 'sans-serif'],
+        display: ['Sora', 'Outfit', 'sans-serif'],
       },
     },
   },

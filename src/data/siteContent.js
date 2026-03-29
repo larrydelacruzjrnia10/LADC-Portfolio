@@ -1,5 +1,7 @@
 // Update this file first when Larry wants to edit text, links, or project details later.
 
+const withBase = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
+
 export const navigationLinks = [
   { label: 'Home', href: '#home' },
   { label: 'About', href: '#about' },
@@ -11,11 +13,27 @@ export const navigationLinks = [
 ];
 
 export const heroContent = {
+  leadIn: "Hello, it's me",
   name: 'Larry Abistano Dela Cruz Jr.',
   title: 'Virtual Assistant | Data Management | Dashboard & Admin Support',
+  titlePrefix: "And I'm a",
+  titleHighlight: 'Virtual Assistant',
+  titleSuffix: 'for Data Management, Dashboard & Admin Support',
   intro: 'I help businesses organize data, manage systems, and improve workflow efficiency.',
+  availability: 'Open to remote roles focused on structured data handling, dashboard monitoring, and admin workflow support.',
   primaryCta: { label: 'View Projects', href: '#projects' },
   secondaryCta: { label: 'Contact Me', href: '#contact' },
+  quickLinks: [
+    { label: 'Email', href: 'mailto:larrydelacruzjr30@gmail.com', icon: 'mail' },
+    { label: 'GitHub', href: 'https://github.com/larrydelacruzjrnia10', icon: 'github' },
+    { label: 'Projects', href: '#projects', icon: 'grid' },
+    { label: 'Contact', href: '#contact', icon: 'chat' },
+  ],
+};
+
+export const profileContent = {
+  imageSrc: withBase('/larry-profile.png'),
+  imageAlt: 'Larry Abistano Dela Cruz Jr. professional portrait',
 };
 
 export const heroStats = [
@@ -93,7 +111,7 @@ export const projects = [
     accent: 'mint',
     github: 'https://github.com/larrydelacruzjrnia10/QuickBite-POS',
     demo: 'https://larrydelacruzjrnia10.github.io/QuickBite-POS/',
-    imageSrc: '/mockups/quickbite-cashier.svg',
+    imageSrc: withBase('/mockups/quickbite-cashier.svg'),
     imageAlt: 'QuickBite POS cashier ordering interface mockup',
   },
   {
@@ -148,28 +166,28 @@ export const showcaseItems = [
     title: 'POS Checkout Screen',
     description: 'A touchscreen cashier layout with menu filters, combo ordering, add-ons, and a live order summary.',
     accent: 'mint',
-    imageSrc: '/mockups/quickbite-cashier.svg',
+    imageSrc: withBase('/mockups/quickbite-cashier.svg'),
     imageAlt: 'QuickBite POS cashier ordering screen mockup',
   },
   {
     title: 'Kitchen Display Queue',
     description: 'A preparation board that helps crews move orders from pending to preparing to ready.',
     accent: 'brand',
-    imageSrc: '/mockups/quickbite-kitchen.svg',
+    imageSrc: withBase('/mockups/quickbite-kitchen.svg'),
     imageAlt: 'QuickBite POS kitchen display queue mockup',
   },
   {
     title: 'Sales Dashboard',
     description: 'An admin-facing summary of revenue, top-selling items, low-stock alerts, and shift performance.',
     accent: 'brand',
-    imageSrc: '/mockups/quickbite-admin.svg',
+    imageSrc: withBase('/mockups/quickbite-admin.svg'),
     imageAlt: 'QuickBite POS sales dashboard mockup',
   },
   {
     title: 'Receipt & Order Summary',
     description: 'A compact payment and receipt view designed for fast handoff at the counter.',
     accent: 'mint',
-    imageSrc: '/mockups/quickbite-receipt.svg',
+    imageSrc: withBase('/mockups/quickbite-receipt.svg'),
     imageAlt: 'QuickBite POS receipt summary mockup',
   },
 ];
